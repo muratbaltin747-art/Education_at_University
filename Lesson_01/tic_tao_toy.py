@@ -4,25 +4,27 @@ player_2: str = input("player_2: ")
 attempts: int = 1 
 def tic_tao_toy( player_1: str, player_2: str, attempts: int):
     arrange = [["", "", ""], ["", "", ""], ["", "", ""]]
-    while attempts <= 9:
+    while attempts <= 5:
         sign_position_1: str|list = input("Enter (sign and position): ")
         sign_position_2: str|list = input("Enter (sign and position): ")
         sign_position_1: str|list = sign_position_1.split()
         sign_position_2: str|list = sign_position_2.split()
-        if attempts <= 5:
+        if " " in (sign_position_1[1] or sign_position_2[1]):
+            raise ValueError("Error, type number in range from 1 to 9 according og quantity of fields in arrange.")
+        if attempts < 3:
             insert_signs(tuple(sign_position_1), tuple(sign_position_2), arrange, attempts)
             for row in arrange:
                 print(row)
             attempts += 1
             continue
         else:
-            raise ValueError(f"trial test between {player_1} and {player_2} finished!")
+            raise ValueError(f"trial test between {player_1} and {player_2} finished! attempts: {attempts}")
 def insert_signs(sign_pos_1: tuple, sign_pos_2: tuple, arrange: list[Any], attempts) -> list:
     sign_1: str = sign_pos_1[0]
     pos_num_1: int  = int(sign_pos_1[1])
     count: int = 1
     Flag_stop: bool = None
-    if attempts <= 5:
+    if attempts <= 3:
         index_row, index_value = 0, 0
         for index_r, row in enumerate(arrange):
             if Flag_stop == True:
