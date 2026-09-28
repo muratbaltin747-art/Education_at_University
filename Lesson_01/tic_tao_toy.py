@@ -1,31 +1,37 @@
 from typing import Any
-user_1: str = input("Who will move first?\nplayer_1: ")
-user_2: str = input("player_2: ")
+# problem with function "write" when i try to write something into file Journal
+#user_1: str = input("Who will move first?\nplayer_1: ")
+#user_2: str = input("player_2: ")
+user_1: str = "Sapar"
+user_2: str = "Murat"
 attempts: int = 1 
-with open("Lesson_01/Files/tic_tao_toy_Journal.csv", "r", encoding= "UTF8") as Journal:
+with open("Lesson_01/Files/tic_tao_toy_Journal.csv", "a", encoding= "UTF8") as Journal:
     pass
-def tic_tao_toy( user_1: str, user_2: str, attempts: int):
+def tic_tao_toy(user_1: str, user_2: str, attempts: int):
     array = [["", "", ""], ["", "", ""], ["", "", ""]]
     positions = [1,2,3,4,5,6,7,8,9]
     while attempts <= 5:
-        if attempts != 5:
-            sign_position_2: str|list = input("Enter (sign + spacebar + position): ") #because when attempt become 5, second user can't put into arra
+        if attempts == 5:
+            sign_position_1: str|list = input("Enter (sign + spacebar + position): ")
+            sign_position_1: str|list = sign_position_1.split()
+        else:
+            sign_position_1: str|list = input("Enter (sign + spacebar + position): ")
+            sign_position_1: str|list = sign_position_1.split()
+            sign_position_2: str|list = input("Enter (sign + spacebar + position): ") 
             sign_position_2: str|list = sign_position_2.split()
-        sign_position_1: str|list = input("Enter (sign + spacebar + position): ")
-        sign_position_1: str|list = sign_position_1.split()
         try:
             if int(sign_position_1[1]) in positions:
                 with open("Lesson_01/Files/tic_tao_toy_Journal.csv", "a", encoding= "UTF8") as Journal:
-                    line = f"{sign_position_1[0]};{sign_position_1[1]}"
+                    line = f"{sign_position_1[0]};{sign_position_1[1]}\n"
                     Journal.write(line)
-            elif int(sign_position_2[1]) in positions:
+            if int(sign_position_2[1]) in positions:
                 with open("Lesson_01/Files/tic_tao_toy_Journal.csv", "a", encoding= "UTF8") as Journal:
-                    line = f"{sign_position_2[0]};{sign_position_2[1]}"
+                    line = f"{sign_position_2[0]};{sign_position_2[1]}\n"
                     Journal.write(line)
             else:
-                raise ValueError
-        except ValueError:
-            print(f"Error, please type sign and position correctly:/n{player_1}: {sign_position_1}/n{player_2}: {sign_position_2}")
+                raise IndexError
+        except IndexError:
+            print(f"Error, please type sign and position correctly:/n{user_1}: {sign_position_1}/n{user_2}: {sign_position_2}")
             continue
         if attempts < 3:
             insert_signs(tuple(sign_position_1), tuple(sign_position_2), array, attempts)
@@ -37,6 +43,8 @@ def tic_tao_toy( user_1: str, user_2: str, attempts: int):
             sign_1, sign_2 = sign_position_1[1], sign_position_2[1]
             player_1,player_2 = (user_1, sign_1), (user_2, sign_2)
             winner: None|str = rules_of_game(array, player_1, player_2)
+            break #temporary
+
 def insert_signs(sign_pos_1: tuple, sign_pos_2: tuple, array: list[Any], attempts) -> list[Any]:
     sign_1: str = sign_pos_1[0]
     pos_num_1: int  = int(sign_pos_1[1])
@@ -84,5 +92,6 @@ def insert_signs(sign_pos_1: tuple, sign_pos_2: tuple, array: list[Any], attempt
         array[index_row][index_value] = sign_2
     return array
 def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|str:
-    pass
+    for item in array:
+        pass
 tic_tao_toy(user_1, user_2, attempts)
