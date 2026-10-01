@@ -1,5 +1,15 @@
 from typing import Any
+from psycopg2 import connect
 
+conn = connect(dbname= 'postgres', user= 'postgres', password= '12345678', host= 'localhost')
+cursor = conn.cursor()
+cursor.execute('SELECT * FROM readers')
+table = cursor.fetchall()
+for row in table:
+    print(row)
+
+cursor.close()
+conn.close()
 """
 TODO list:
 1) create the DB for this programm and add count of round
@@ -232,4 +242,4 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
         raise TypeError("Error, fields was filled by another signs (not only X and O)!!!")
 
 
-tic_tao_toy(user_1, user_2, attempts)
+#tic_tao_toy(user_1, user_2, attempts)
