@@ -3,10 +3,10 @@ from psycopg2 import connect
 
 """
 TODO list:
-1) create the DB for this programm and add count of round (done)
-2) fix and finish the diagonal checking in rules_of_games()
-3) accomplish the else statement
-4) fix error with parametr of function insert_signs when at the end only one person fill field
+1) create the DB for this programm and add count of round [done]
+2) fix and finish the diagonal checking in rules_of_games() [done]
+3) accomplish the else statement [done]
+4) fix error with parametr of function insert_signs when at the end only one person fill field 
 5) fix problem when user can fill wrong sign (when he  usually write "X", but after he'll write "O")
 """
 
@@ -20,7 +20,7 @@ user_1: str = input("Who will move first?\nplayer_1: ")
 user_2: str = input("player_2: ")
 attempts: int = 1 
 
-def tic_tao_toy(user_1: str, user_2: str, attempts: int):
+def tic_tao_toy(user_1: str, user_2: str, attempts: int) -> None:
 
     with open("Lesson_01\Files\Round_Journal.csv", 'w', encoding= "UTF8") as Journal:
         pass
@@ -68,19 +68,18 @@ def tic_tao_toy(user_1: str, user_2: str, attempts: int):
             continue
         if attempts < 3:
             insert_signs(tuple(sign_position_1), tuple(sign_position_2), array, attempts)
-            for row in array:
-                print(row)
             attempts += 1
             continue
-        else: #this statement 'd accomlish from TODO
+        else:
             insert_signs(tuple(sign_position_1), tuple(sign_position_2), array, attempts)
             sign_1, sign_2 = sign_position_1[0], sign_position_2[0]
             player_1,player_2 = (user_1, sign_1), (user_2, sign_2)
             winner: None|str = rules_of_game(array, player_1, player_2)
-            print(f"winner is {winner}")
-            break #temporary
-    else:
-        sent_data_to_DB(round_index)
+            if winner != None:
+                sent_data_to_DB(round_index, winner)
+                return None
+            else:
+                continue
 def insert_signs(sign_pos_1: tuple, sign_pos_2: tuple, array: list[Any], attempts) -> list[Any]:
     sign_1: str = sign_pos_1[0]
     pos_num_1: int  = int(sign_pos_1[1])
@@ -185,14 +184,20 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
                     else:
                         continue
     else:
-        if count_1 != 3 and count_2 != 3:
+        if count_1 == 3:
+            user_1: str = player_1[0]
+            return user_1
+        elif count_2 == 3:
+            user_2: str = player_2[0]
+            return user_2
+        elif count_1 != 3 and count_2 != 3:
             None_count += 1
 
     row: int = 0
     column: int = 0
 
     #vertical checking
-    while row <= 2:
+    while row <= 3:
         if count_1 == 3:
             user_1 = player_1[0]
             return user_1
@@ -203,12 +208,16 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
             count_1, count_2 = 0, 0
             column = 0
         while column <= 2:
-            if array[column][row] == sign_1:
-                count_1 += 1
-            if array[column][row] == sign_2:
-                count_2 += 1
-            column += 1
-            continue
+            try:
+                if array[column][row] == sign_1:
+                    count_1 += 1
+                if array[column][row] == sign_2:
+                    count_2 += 1
+                column += 1
+                continue
+            except IndexError:
+                row += 1
+                break
         else:
             row += 1
             continue
@@ -218,7 +227,7 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
     
     attempts: int = 0
 
-    #diagonal checking
+    #diagonal checking \
     while attempts <= 2:
         if array[attempts][attempts] == sign_1:
             count_1 += 1
@@ -230,7 +239,34 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
         if count_1 == 3:
             user_1: str = player_1[0]
             return user_1
-        if count_2 == 3:
+        elif count_2 == 3:
+            user_2: str = player_2[0]
+            return user_2
+        else:
+            None_count += 1
+
+    attempts: int = 0
+    count_1, count_2 = 0, 0
+    row: int = 0
+    value: int = 2
+
+    #diagonal checking /
+    # 0 2, 1 1, 2 0
+
+    while attempts <= 2:
+        if array[row][value] == sign_1:
+            count_1 += 1
+        if array[row][value] == sign_2:
+            count_2 += 1
+        row += 1
+        value -= 1
+        attempts += 1
+        continue
+    else:
+        if count_1 == 3:
+            user_1: str = player_1[0]
+            return user_1
+        elif count_2 == 3:
             user_2: str = player_2[0]
             return user_2
         else:
@@ -239,7 +275,7 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
         return None
     else:
         raise TypeError("Error, fields was filled by another signs (not only X and O)!!!")
-def sent_data_to_DB(previous_round_index: int):
+def sent_data_to_DB(previous_round_index: int, winner: str|None) -> None:
     with open(r"Lesson_01\Files\Round_Journal.csv", "r", encoding= "UTF8") as Journal:
         
         correct_journal: str = ''
@@ -295,5 +331,6 @@ def sent_data_to_DB(previous_round_index: int):
 
         cursor.close()
         conn.close()
+        return None
     
 tic_tao_toy(user_1, user_2, attempts)
