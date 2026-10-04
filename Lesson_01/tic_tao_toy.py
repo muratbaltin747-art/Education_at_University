@@ -50,7 +50,8 @@ def tic_tao_toy(user_1: str, user_2: str, attempts: int) -> None:
         else:
             sign_position_1: str|list = input("Enter (sign + spacebar + position): ")
             sign_position_1: str|list = sign_position_1.split()
-            sign_position_2: str|list = input("Enter (sign + spacebar + position): ") 
+            sign_position_2: str|list = input("Enter (sign + spacebar + position): ")
+            print() 
             sign_position_2: str|list = sign_position_2.split()
         try:
             if int(sign_position_1[1]) in positions:
@@ -76,9 +77,15 @@ def tic_tao_toy(user_1: str, user_2: str, attempts: int) -> None:
             player_1,player_2 = (user_1, sign_1), (user_2, sign_2)
             winner: None|str = rules_of_game(array, player_1, player_2)
             if winner != None:
+                print(f"Winner is {winner}")
                 sent_data_to_DB(round_index, winner)
                 return None
             else:
+                if attempts == 5:
+                    print("Nobody is winner!!!")
+                    sent_data_to_DB(round_index, winner)
+                    return None
+                attempts += 1
                 continue
 def insert_signs(sign_pos_1: tuple, sign_pos_2: tuple, array: list[Any], attempts) -> list[Any]:
     sign_1: str = sign_pos_1[0]
@@ -251,8 +258,6 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
     value: int = 2
 
     #diagonal checking /
-    # 0 2, 1 1, 2 0
-
     while attempts <= 2:
         if array[row][value] == sign_1:
             count_1 += 1
@@ -271,7 +276,7 @@ def rules_of_game(array: list[Any], player_1: tuple, player_2: tuple) -> None|st
             return user_2
         else:
             None_count += 1
-    if None_count == 3:
+    if None_count == 4:
         return None
     else:
         raise TypeError("Error, fields was filled by another signs (not only X and O)!!!")
