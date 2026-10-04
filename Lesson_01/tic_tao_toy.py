@@ -2,15 +2,6 @@ from typing import Any
 from psycopg2 import connect
 
 """
-TODO list:
-1) create the DB for this programm and add count of round [done]
-2) fix and finish the diagonal checking in rules_of_games() [done]
-3) accomplish the else statement [done]
-4) fix error with parametr of function insert_signs when at the end only one person fill field 
-5) fix problem when user can fill wrong sign (when he  usually write "X", but after he'll write "O")
-"""
-
-"""
 I could check all loops thank for gathering all indexes from rows and columns 
 and take all combinations with one of the sign and compare it with list of winner indexes.
 """
