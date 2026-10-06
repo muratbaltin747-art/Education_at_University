@@ -13,7 +13,7 @@ attempts: int = 1
 
 def tic_tao_toy(user_1: str, user_2: str, attempts: int) -> None:
 
-    with open("Lesson_01\Files\Round_Journal.csv", 'w', encoding= "UTF8") as Journal:
+    with open("Lesson_01\Files\Round_Journal.csv", 'w', encoding= "UTF8") as Journal: # delete previous moves
         pass
 
     conn = connect(dbname= 'Tic Tao Toy', user= 'postgres', password= '12345678', host= 'localhost')
@@ -34,11 +34,11 @@ def tic_tao_toy(user_1: str, user_2: str, attempts: int) -> None:
     array = [["", "", ""], ["", "", ""], ["", "", ""]]
     positions = [1,2,3,4,5,6,7,8,9]
 
-    while attempts <= 5:
-        if attempts == 5:
+    while attempts <= 5: 
+        if attempts == 5: #allow doing the last move for player_1
             sign_position_1: str|list = input("Enter (sign + spacebar + position): ")
             sign_position_1: str|list = sign_position_1.split()
-        else:
+        else: 
             sign_position_1: str|list = input("Enter (sign + spacebar + position): ")
             sign_position_1: str|list = sign_position_1.split()
             sign_position_2: str|list = input("Enter (sign + spacebar + position): ")
@@ -55,24 +55,24 @@ def tic_tao_toy(user_1: str, user_2: str, attempts: int) -> None:
                     Journal.write(line)
             else:
                 raise IndexError
-        except IndexError:
+        except IndexError: #if someone signs wrong index, raise error
             print(f"Error, please type sign and position correctly:/n{user_1}: {sign_position_1}/n{user_2}: {sign_position_2}")
             continue
-        if attempts < 3:
+        if attempts < 3: #when both players don't sign 3 times into matrix
             insert_signs(tuple(sign_position_1), tuple(sign_position_2), array, attempts)
             attempts += 1
             continue
-        else:
+        else: #when both players sign 3 times into matrix
             insert_signs(tuple(sign_position_1), tuple(sign_position_2), array, attempts)
             sign_1, sign_2 = sign_position_1[0], sign_position_2[0]
             player_1,player_2 = (user_1, sign_1), (user_2, sign_2)
             winner: None|str = rules_of_game(array, player_1, player_2)
-            if winner != None:
+            if winner != None: 
                 print(f"Winner is {winner}")
                 sent_data_to_DB(round_index, winner)
                 return None
             else:
-                if attempts == 5:
+                if attempts == 5: #if at the end, nobody don't winn
                     print("Nobody is winner!!!")
                     sent_data_to_DB(round_index, winner)
                     return None
@@ -310,7 +310,6 @@ def sent_data_to_DB(previous_round_index: int, winner: str|None) -> None:
 
         user_1_move: str = ''.join(list_move_user_1)
         user_2_move: str = ''.join(list_move_user_2)
-        winner: bool = None
         current_round: int = previous_round_index + 1 
 
         conn = connect(dbname= 'Tic Tao Toy', user= 'postgres', password= '12345678', host= 'localhost')
